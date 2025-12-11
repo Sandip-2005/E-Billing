@@ -1,0 +1,26 @@
+.profile-img-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.profile-img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border: 2px solid #000;
+}
+
+/* Text inside circle */
+.profile-text {
+    position: absolute;
+    bottom: 0px; /* place near bottom of circle */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-weight: bolder;
+    padding: 2px 4px;
+    border-radius: 10px;
+}

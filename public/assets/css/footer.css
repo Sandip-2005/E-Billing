@@ -1,0 +1,44 @@
+/* Custom Footer Styles */
+.footer {
+    background-color: #212529; /* A standard dark background */
+    color: #adb5bd; /* A soft grey for text */
+}
+.footer h6 {
+    color: #ffffff; /* White headings */
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.footer a {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.footer a:hover {
+    color: #ffffff; /* Brighten link color on hover */
+    text-decoration: underline;
+}
+.footer .social-icons a {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #495057;
+    border-radius: 50%;
+    margin-right: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.footer .social-icons a:hover {
+    background-color: #3498db; /* Your brand's blue color */
+    border-color: #3498db;
+    color: #ffffff;
+    text-decoration: none;
+}
+.footer .copyright-text a {
+    color: #3498db; /* Brand color for the special mention */
+    font-weight: bold;
+}
+.footer .copyright-text a:hover {
+    color: #ffffff;
+}

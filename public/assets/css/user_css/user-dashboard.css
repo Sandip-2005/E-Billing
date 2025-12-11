@@ -1,0 +1,252 @@
+/* Import a clean font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/* Main container for the dashboard content */
+.dashboard-container {
+    font-family: "Poppins", sans-serif;
+    padding: 20px;
+    background-color: #f4f7fa; /* Light grey background */
+}
+
+/* General card styling */
+.card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    transition: transform 0.2s ease-in-out;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* ----------------------------- */
+/* 1. KPI Cards Section */
+/* ----------------------------- */
+.kpi-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.kpi-cards .card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #fff;
+}
+
+.kpi-cards .card-icon {
+    font-size: 24px;
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kpi-cards .card-content h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.kpi-cards .card-content p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* KPI Card Color Variants */
+.card-blue {
+    background: linear-gradient(135deg, #4a90e2, #0056b3);
+}
+.card-yellow {
+    background: linear-gradient(135deg, #f5a623, #c28114);
+}
+.card-green {
+    background: linear-gradient(135deg, #7ed321, #4b9401);
+}
+.card-purple {
+    background: linear-gradient(135deg, #9013fe, #6f02cf);
+}
+.card-red {
+    background: linear-gradient(135deg, #d0021b, #a10012);
+}
+
+.card-blue .card-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.card-yellow .card-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.card-green .card-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.card-purple .card-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.card-red .card-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ----------------------------- */
+/* 2. Main Content Grid */
+/* ----------------------------- */
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+/* Charts Section */
+.charts-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.chart-container h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #333;
+}
+.small-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Side Panel Section */
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.side-panel .card h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.quick-actions .btn {
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border: none;
+}
+.quick-actions .btn:hover {
+    transform: scale(1.02);
+}
+.quick-actions .btn i {
+    margin-right: 8px;
+}
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-tertiary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+/* Recent Activity */
+.recent-activity .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.recent-activity .activity-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.activity-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+.activity-icon.payment {
+    background-color: #28a745;
+}
+.activity-icon.invoice {
+    background-color: #17a2b8;
+}
+.activity-icon.alert {
+    background-color: #dc3545;
+}
+
+.activity-text {
+    font-size: 14px;
+    color: #555;
+}
+.activity-text b,
+.activity-text strong {
+    color: #000;
+    font-weight: 600;
+}
+.activity-text i,
+.activity-text em {
+    color: #0056b3;
+}
+
+/* ----------------------------- */
+/* Responsive Design */
+/* ----------------------------- */
+@media (max-width: 1200px) {
+    .main-content-grid {
+        /* grid-template-columns: 1fr; Stack charts and side panel */
+        grid-template-columns: 1fr; /* Stack charts and side panel on tablets and below */
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 15px; /* Reduce padding on smaller screens */
+    }
+
+    .kpi-cards {
+        grid-template-columns: 1fr 1fr; /* Two cards per row */
+    }
+
+    .small-charts-grid {
+        grid-template-columns: 1fr; /* Stack small charts */
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-container {
+        padding: 10px; /* Further reduce padding for very small screens */
+    }
+
+    .kpi-cards {
+        grid-template-columns: 1fr; /* One card per row */
+    }
+
+    .kpi-cards .card-content h3 {
+        font-size: 22px; /* Slightly reduce font size for better fit */
+    }
+}

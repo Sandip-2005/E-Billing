@@ -1,0 +1,139 @@
+/* CSS for Signup Page */
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 450px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.login-header .icon {
+    font-size: 4rem;
+    color: #0d6efd; /* Bootstrap Primary Blue */
+}
+
+.login-header h2 {
+    font-weight: 700;
+    color: #343a40;
+}
+
+.form-floating label {
+    color: #6c757d;
+}
+
+/* Custom styling for floating labels with icons */
+.form-floating .form-control {
+    height: calc(3.5rem + 2px);
+    padding: 1rem 1rem 1rem 3rem; /* Make space for the icon */
+}
+
+.form-floating > label {
+    padding: 1rem 1rem 1rem 3rem;
+}
+
+.input-icon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none; /* Make icon non-interactive */
+}
+
+.form-floating .form-control:focus ~ .input-icon,
+.form-floating .form-control:not(:placeholder-shown) ~ .input-icon {
+    /* Optional: change icon color on focus */
+    color: #0d6efd;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary {
+    padding: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.signup-link a {
+    font-weight: 600;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+
+
+/* CSS for Signup Page */
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f4f7f6;
+}
+
+.signup-container {
+    padding: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-box {
+    width: 100%;
+    max-width: 850px; /* Wider card for more fields */
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.signup-header .icon {
+    font-size: 4rem;
+    color: #0d6efd;
+}
+
+.signup-header h2 {
+    font-weight: 700;
+    color: #343a40;
+}
+
+.form-floating label {
+    color: #6c757d;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-register {
+    padding: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.login-link a {
+    font-weight: 600;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
