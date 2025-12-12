@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function add_products ()
     {
-        $shops = ShopModel::where('user_id', auth::guard('cuser')->id())->get();
+        $shops = ShopModel::where('user_id', auth()->id())->get();
         return view('user_layout.user_inventory.add_products', compact('shops'));
     }
 
@@ -34,7 +34,7 @@ class ProductController extends Controller
 
         // Store product in database
         ProductModel::create([
-            'user_id' => auth::guard('cuser')->id(), // Use the default guard which should reference the 'users' table
+            'user_id' => auth()->id(), // Use the default guard which should reference the 'users' table
             'shop_id' => $request->shop_id,
             'product_id' => $request->product_id,
             'product_name' => $request->product_name,
@@ -47,16 +47,16 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = ProductModel::where('user_id', auth::guard('cuser')->id())->get();
+        $products = ProductModel::where('user_id', auth()->id())->get();
         return view('user_layout.user_inventory.manage_products', compact('products'));
     }
 
     public function manage_products (Request $request)
     {
-        $shops = ShopModel::where('user_id', auth::guard('cuser'))->get();
+        $shops = ShopModel::where('user_id', auth()->id())->get();
         $shop_id = $request->get('shop_id');
         $products = ProductModel::with('shop')
-            ->where('user_id', auth::guard('cuser')->id())
+            ->where('user_id', auth()->id())
             ->when($shop_id, function($query) use ($shop_id) {
                 $query->where('shop_id', $shop_id);
             })->get();

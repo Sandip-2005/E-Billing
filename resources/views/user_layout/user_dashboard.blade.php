@@ -46,7 +46,7 @@
                             <i class="fa-solid fa-hand-holding-dollar"></i>
                         </div>
                         <div>
-                            <h4 class="card-title mb-1">${{ number_format($totalPayments ?? 25430, 2) }}</h4>
+                            <h4 class="card-title mb-1">{{ number_format($totalPayments ?? 0.00, 2) }}</h4>
                             <p class="card-text mb-0">Payments Collected</p>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                             <i class="fa-solid fa-chart-line"></i>
                         </div>
                         <div>
-                            <h4 class="card-title mb-1">${{ number_format($revenueThisMonth ?? 8500, 2) }}</h4>
+                            <h4 class="card-title mb-1">{{ number_format($revenueThisMonth ?? 0.00, 2) }}</h4>
                             <p class="card-text mb-0">Revenue This Month</p>
                         </div>
                     </div>

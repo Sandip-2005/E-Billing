@@ -7,6 +7,7 @@ use App\Models\AddCustomer;
 use App\Models\InvoiceModel;
 use App\Models\InvoiceItemModel;
 use App\Models\PaymentsModel; // Add this line
+use App\Models\ProductModel; // <<< ADDED
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -105,17 +106,30 @@ class InvoiceController extends Controller
                 ]);
             }
 
-            // Store each bill item
+            // Store each bill item and decrement product stock
             foreach ($request->items as $item) {
+                // Validate product exists and stock available
+                $product = ProductModel::find($item['product_id']);
+                if (!$product) {
+                    throw new \Exception("Product not found (ID: {$item['product_id']})");
+                }
+                if ($product->quantity < $item['quantity']) {
+                    throw new \Exception("Insufficient stock for product: {$product->product_name} (Available: {$product->quantity})");
+                }
+
                 $lineTotal = $item['quantity'] * $item['unit_price'];
                 InvoiceItemModel::create([
                     'bill_id' => $bill->id,
                     'product_id' => $item['product_id'],
-                    'product_name' => $item['product_name'] ?? '',
+                    'product_name' => $item['product_name'] ?? $product->product_name ?? '',
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
                     'line_total' => $lineTotal,
                 ]);
+
+                // decrement stock and save
+                $product->quantity = $product->quantity - $item['quantity'];
+                $product->save();
             }
 
             DB::commit();

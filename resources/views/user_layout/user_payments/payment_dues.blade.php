@@ -24,15 +24,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($partiallyPaidInvoices as $invoice)
+                            @foreach($partiallyPaidInvoices as $invoice)
                                 <tr style="background: #e3f2fd;">
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $invoice->id }}</td>
                                     <td>{{ $invoice->customer->customer_name }}</td>
                                     <td>{{ $invoice->shop->shop_name }}</td>
                                     <td style="color: #2196f3; font-weight: 600;">{{ $invoice->total }}</td>
-                                    <td style="color: #4caf50; font-weight: 600;">{{ $invoice->getPaidAmountAttribute() }}</td>
-                                    <td style="color: #ff9800; font-weight: 600;">{{ $invoice->getDueAmountAttribute() }}</td>
+                                    <td style="color: #4caf50; font-weight: 600;">{{ $invoice->paid_amount }}</td>
+                                    <td style="color: #ff9800; font-weight: 600;">{{ $invoice->due_amount }}</td>
                                     <td>{{ $invoice->status }}</td>
                                     <td>
                                         <a href="{{ route('show_invoice', ['id' => $invoice->id]) }}" class="btn btn-sm btn-primary">View</a>
@@ -54,7 +54,7 @@
                                                             <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
                                                             <div class="mb-3">
                                                                 <label for="amount{{ $invoice->id }}" class="form-label fw-semibold" style="color: #ff9800;">Amount to Pay</label>
-                                                                <input type="number" step="0.01" class="form-control form-control-lg" id="amount{{ $invoice->id }}" name="amount" max="{{ $invoice->getDueAmountAttribute() }}" required style="border: 1px solid #ffe0b2; background: #fffde7;">
+                                                                <input type="number" step="0.01" class="form-control form-control-lg" id="amount{{ $invoice->id }}" name="amount" max="{{ $invoice->due_amount }}" required style="border: 1px solid #ffe0b2; background: #fffde7;">
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="payment_date{{ $invoice->id }}" class="form-label fw-semibold" style="color: #4caf50;">Payment Date</label>
@@ -78,6 +78,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    
                     {{ $partiallyPaidInvoices->links() }}
                 </div>
             </div>
