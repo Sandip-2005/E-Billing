@@ -90,8 +90,10 @@ class PaymentController extends Controller
             $query->where('shop_id', $request->shop_id);
         }
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('status', $request->status)
+            &&$query->orWhere('payment_mode', $request->status);
         }
+        
 
         $invoices = $query->latest('bill_date')
             ->paginate(50)

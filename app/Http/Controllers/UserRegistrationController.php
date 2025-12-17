@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
 
 class UserRegistrationController extends Controller
 {
@@ -87,7 +91,7 @@ class UserRegistrationController extends Controller
                 ->with('success', 'Login successful!');
         }
 
-        return back()->with('fail', 'The provided credentials do not match our records.')
+        return back()->withErrors(['usernameoremail' => 'The provided credentials do not match our records.'])
             ->onlyInput('usernameoremail');
     }
 
@@ -184,5 +188,83 @@ class UserRegistrationController extends Controller
         } else {
             return redirect()->back()->with('fail', 'Something went wrong, try again later.');
         }
+    }
+
+    public function forget_password_form()
+    {
+        return view('login&signup.forgot_password');
+    }
+
+    public function send_code(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:user_signup,email'
+        ]);
+
+        $code = rand(100000, 999999);
+        $user = UserModel::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('fail', 'Email not found.');
+        }
+
+        DB::table('password_reset_codes')->updateOrInsert(
+            ['email' => $request->email],
+            [
+                'code' => $code,
+                'created_at' => Carbon::now()
+            ]
+        );
+
+        try {
+            Mail::raw("Your password reset OTP is: $code. It expires in 10 minutes.", function ($message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Password Reset Code');
+            });
+            // Log success for debugging
+            \Log::info("OTP sent to {$request->email}: $code");
+        } catch (\Exception $e) {
+            \Log::error("Failed to send OTP to {$request->email}: " . $e->getMessage());
+            return back()->with('fail', 'Failed to send email. Please check your mail configuration or try again later.');
+        }
+
+        return redirect()->route('verify_otp_form')->with(['email' => $request->email, 'success' => 'Verification code sent to your email.']);
+    }
+
+    public function verify_otp_form()
+    {
+        return view('login&signup.verify_otp');
+    }
+
+    public function verify_Code(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:user_signup,email',
+            'code'  => 'required|string|size:6',
+            'password' => 'required|string|min:6|confirmed'
+        ]);
+
+        $record = DB::table('password_reset_codes')
+            ->where('email', $request->email)
+            ->where('code', $request->code)
+            ->first();
+
+        if (!$record) {
+            return back()->with('fail', 'Invalid verification code.');
+        }
+
+        // Check expiry (10 minutes)
+        if (Carbon::parse($record->created_at)->addMinutes(10)->isPast()) {
+            DB::table('password_reset_codes')->where('email', $request->email)->delete();
+            return back()->with('fail', 'Code expired. Please request a new one.');
+        }
+
+        UserModel::where('email', $request->email)->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        DB::table('password_reset_codes')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->with('success', 'Password reset successful. Please login with your new password.');
     }
 }

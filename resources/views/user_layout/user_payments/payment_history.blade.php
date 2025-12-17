@@ -39,7 +39,9 @@
                             <option value="">All Status</option>
                             <option value="paid" {{ (isset($filters['status']) && $filters['status']=='paid') ? 'selected' : '' }}>Paid</option>
                             <option value="partially_paid" {{ (isset($filters['status']) && $filters['status']=='partially_paid') ? 'selected' : '' }}>Partially Paid</option>
-                            <option value="unpaid" {{ (isset($filters['status']) && $filters['status']=='unpaid') ? 'selected' : '' }}>Unpaid</option>
+                            {{-- <option value="unpaid" {{ (isset($filters['status']) && $filters['status']=='unpaid') ? 'selected' : '' }}>Unpaid</option> --}}
+                            <option value="cash" {{ (isset($filters['status']) && $filters['status']=='cash') ? 'selected' : '' }}>Cash</option>
+                            <option value="online" {{ (isset($filters['status']) && $filters['status']=='online') ? 'selected' : '' }}>Online</option>
                             {{-- <option value="draft" {{ (isset($filters['status']) && $filters['status']=='draft') ? 'selected' : '' }}>Draft</option> --}}
                         </select>
                     </div>
@@ -64,6 +66,7 @@
                                 <th>Last Payment Date</th>
                                 <th>Total</th>
                                 <th>Status</th>
+                                <th>Payment Mode</th>
                                 <th>Note</th>
                             </tr>
                         </thead>
@@ -78,6 +81,7 @@
                                     <td>{{ $invoice->payments->last()->payment_date ?? '-' }}</td>
                                     <td>₹{{ number_format($invoice->total,2) }}</td>
                                     <td>{{ $invoice->status }}</td>
+                                    <td>{{ $invoice->payment_mode ?? '-'}}</td>
                                     <td>{{ $invoice->payments->last()->note ?? '-' }}</td>
                                 </tr>
                             @empty

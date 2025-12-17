@@ -99,10 +99,10 @@
                 new Chart(ctxRevenue, {
                     type: 'line',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        labels: {!! json_encode($revenueChartLabels ?? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']) !!},
                         datasets: [{
                             label: 'Revenue',
-                            data: [1200, 1900, 3000, 5000, 2300, 3100, 4000],
+                            data: {!! json_encode($revenueChartData ?? [1200, 1900, 3000, 5000, 2300, 3100, 4000, 3500, 2800, 4200, 3800, 4500]) !!},
                             borderColor: '#0d6efd',
                             tension: 0.2
                         }]
@@ -120,10 +120,10 @@
                 new Chart(ctxStatus, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Paid', 'Pending', 'Overdue'],
+                        labels: ['Paid', 'Partially Paid'],
                         datasets: [{
-                            data: [300, 82, 15],
-                            backgroundColor: ['#198754', '#ffc107', '#dc3545']
+                            data: [{{ isset($paid) ? $paid->count() : 0 }}, {{ isset($pending) ? $pending->count() : 0 }}],
+                            backgroundColor: ['#198754', '#ffc107']
                         }]
                     },
                     options: {
@@ -139,10 +139,10 @@
                 new Chart(ctxMethods, {
                     type: 'bar',
                     data: {
-                        labels: ['UPI', 'Cash'],
+                        labels: ['ONLINE', 'Cash'],
                         datasets: [{
                             label: 'Payments',
-                            data: [150, 250],
+                            data: [{{ $online ?? 0 }},{{ $cash ?? 0 }}],
                             backgroundColor: ['#6f42c1', '#007bff']
                         }]
                     },

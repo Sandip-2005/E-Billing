@@ -16,8 +16,8 @@ class AddCustomerController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:40',
             'email' => 'nullable|string|email|max:40',
-            'phone_number' => 'required|string|max:30',
-            'address' => 'required|string|max:100',
+            'phone_number' => 'nullable|string|max:30',
+            'address' => 'nullable|string|max:100',
         ]);
 
         $customer= $request->user()->customers()->create([
@@ -28,7 +28,7 @@ class AddCustomerController extends Controller
         ]);
 
         if($customer){
-            return redirect('user_dashboard')->with('success', 'Customer added successfully.');
+            return redirect('add_customer')->with('success', 'Customer added successfully.');
         }else{
             return redirect()->back()->with('fail', 'Something went wrong, try again later.');
         }

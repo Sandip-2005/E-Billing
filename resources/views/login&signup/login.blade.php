@@ -12,7 +12,15 @@
 
         <form method="POST" action="{{ route('user_login') }}">
             @csrf
-
+            @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             <div class="form-floating position-relative mb-3">
                 <input type="text" class="form-control" id="usernameoremail" name="usernameoremail" placeholder="Email/Username" required>
                 <label for="usernameoremail">Email or Username</label>
@@ -32,7 +40,7 @@
                         Remember me
                     </label>
                 </div>
-                <a href="#" class="text-decoration-none small">Forgot Password?</a>
+                <a href="{{ route('forget_password_form') }}" class="text-decoration-none small">Forgot Password?</a>
             </div>
 
             <div class="d-grid">

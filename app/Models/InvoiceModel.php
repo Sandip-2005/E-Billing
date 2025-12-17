@@ -13,7 +13,7 @@ class InvoiceModel extends Model
 
     protected $fillable = [
         'user_id', 'shop_id', 'customer_id', 'shop_phone', 'shop_gst',
-        'shop_address', 'bill_date', 'sub_total', 'tax', 'discount', 'total', 'status', 'due_amount'
+        'shop_address', 'bill_date', 'sub_total', 'tax', 'discount', 'total', 'status', 'due_amount', 'payment_mode'
     ];
 
     public function items()

@@ -1,361 +1,320 @@
 @extends('user_layout.user_index')
 
 @section('content')
-    <div class="container py-4">
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h3 class="mb-0"><i class="bi bi-receipt"></i> Create New Bill</h3>
-                <a href="{{ route('user_dashboard') }}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
-            </div>
-            <div class="card-body">
-                {{-- Error Alerts --}}
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $err)
-                                <li>{{ $err }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-receipt"></i> {{ isset($invoice) ? 'Edit Invoice' : 'Create New Invoice' }}</h3>
+        </div>
+        <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <form id="invoiceForm" action="{{ isset($invoice) ? route('update_invoice', $invoice->id) : route('store_invoice') }}" method="POST">
+                @csrf
+                @if(isset($invoice))
+                    @method('PUT')
                 @endif
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
 
-                {{-- Bill Form --}}
-                <form action="{{ route('store_invoice') }}" method="POST" id="billForm">
-                    @csrf
+                <!-- Shop Selection -->
+                <div class="mb-3">
+                    <label for="shop_id" class="form-label">Shop</label>
+                    <select name="shop_id" id="shop_id" class="form-select" required>
+                        <option value="">Select Shop</option>
+                        @foreach($shops as $shop)
+                            <option value="{{ $shop->id }}" {{ isset($invoice) && $invoice->shop_id == $shop->id ? 'selected' : '' }}>
+                                {{ $shop->shop_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    {{-- Select Shop --}}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Select Shop <span class="text-danger">*</span></label>
-                        <select name="shop_id" id="shopSelect" class="form-control" required>
-                            <option value="">Choose Shop</option>
-                            @foreach ($shops as $shop)
-                                <option value="{{ $shop->id }}">{{ $shop->shop_name }}</option>
-                            @endforeach
-                        </select>
+                <!-- Customer Selection or New Customer -->
+                <div class="mb-3">
+                    <label class="form-label">Customer</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="customer_type" id="existing_customer" value="existing" {{ isset($invoice) ? 'checked' : 'checked' }}>
+                        <label class="form-check-label" for="existing_customer">Existing Customer</label>
                     </div>
-
-                    {{-- Shop Details (auto-filled) --}}
-                    <div class="row g-3 mb-4" id="shopDetails" style="display:none;">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Shop Phone</label>
-                            <input type="text" id="shopPhone" class="form-control bg-light" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">GST Number</label>
-                            <input type="text" id="shopGST" class="form-control bg-light" readonly>
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label fw-semibold">Shop Address</label>
-                            <textarea id="shopAddress" rows="2" class="form-control bg-light" readonly></textarea>
-                        </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="customer_type" id="new_customer" value="new">
+                        <label class="form-check-label" for="new_customer">New Customer</label>
                     </div>
+                </div>
 
-                    {{-- Hidden inputs to submit shop details --}}
-                    <input type="hidden" name="shop_phone" id="shop_phone_input">
-                    <input type="hidden" name="shop_gst" id="shop_gst_input">
-                    <input type="hidden" name="shop_address" id="shop_address_input">
+                <div id="existing_customer_fields" class="mb-3">
+                    <select name="customer_id" id="customer_id" class="form-select">
+                        <option value="">Select Customer</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}" {{ isset($invoice) && $invoice->customer_id == $customer->id ? 'selected' : '' }}>
+                                {{ $customer->customer_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    {{-- Customer Info --}}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Existing Customer<span class="text-danger">*</span></label>
-                        <select name="customer_id" id="customerSelect" class="form-select" required>
-                            <option value="">-- Select a Customer --</option>
-                            @forelse ($customers as $customer)
-                                <option value="{{ $customer->id }}" data-name="{{ $customer->customer_name }}"
-                                    data-phone="{{ $customer->phone_number }}" data-email="{{ $customer->email }}"
-                                    data-address="{{ $customer->address }}">
-                                    Name: {{ $customer->customer_name }}&nbsp;&nbsp;||&nbsp;&nbsp;
-                                    Phone: ({{ $customer->phone_number }})&nbsp;&nbsp;||&nbsp;&nbsp;
-                                    Email: ({{ $customer->email }})
-                                </option>
-                            @empty
-                                <option value="" disabled>No customers found</option>
-                            @endforelse
-                        </select>
+                <div id="new_customer_fields" class="mb-3" style="display: none;">
+                    <input type="text" name="customer_name" class="form-control mb-2" placeholder="Customer Name" value="{{ isset($invoice) && !$invoice->customer_id ? $invoice->customer->customer_name ?? '' : '' }}">
+                    <input type="email" name="customer_email" class="form-control mb-2" placeholder="Email" value="{{ isset($invoice) && !$invoice->customer_id ? $invoice->customer->email ?? '' : '' }}">
+                    <input type="text" name="customer_phone" class="form-control mb-2" placeholder="Phone" value="{{ isset($invoice) && !$invoice->customer_id ? $invoice->customer->phone_number ?? '' : '' }}">
+                    <textarea name="customer_address" class="form-control" placeholder="Address">{{ isset($invoice) && !$invoice->customer_id ? $invoice->customer->address ?? '' : '' }}</textarea>
+                </div>
+
+                <!-- Bill Date -->
+                <div class="mb-3">
+                    <label for="bill_date" class="form-label">Bill Date</label>
+                    <input type="date" name="bill_date" id="bill_date" class="form-control" value="{{ isset($invoice) ? $invoice->bill_date : date('Y-m-d') }}" required>
+                </div>
+
+                <!-- Items Table -->
+                <div class="mb-3">
+                    <label class="form-label">Items</label>
+                    <table class="table table-bordered" id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                            <!-- Prefill existing items if editing -->
+                            @if(isset($invoice))
+                                @foreach($invoice->items as $item)
+                                    <tr>
+                                        <td>
+                                            <select name="items[{{ $loop->index }}][product_id]" class="form-select product-select" required>
+                                                <option value="{{ $item->product_id }}" selected>{{ $item->product_name }}</option>
+                                            </select>
+                                            <input type="hidden" name="items[{{ $loop->index }}][product_name]" value="{{ $item->product_name }}">
+                                        </td>
+                                        <td><input type="number" name="items[{{ $loop->index }}][quantity]" class="form-control quantity" value="{{ $item->quantity }}" min="1" required></td>
+                                        <td><input type="number" step="0.01" name="items[{{ $loop->index }}][unit_price]" class="form-control unit-price" value="{{ $item->unit_price }}" required></td>
+                                        <td><input type="number" step="0.01" class="form-control line-total" value="{{ $item->line_total }}" readonly></td>
+                                        <td><button type="button" class="btn btn-danger btn-sm remove-item">Remove</button></td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary btn-sm" id="addItem">Add Item</button>
+                </div>
+
+                <!-- Tax, Discount, Payment -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="tax" class="form-label">Tax (%)</label>
+                        <input type="number" step="0.01" name="tax" id="tax" class="form-control" value="{{ isset($invoice) && $invoice->sub_total > 0 ? round(($invoice->tax / $invoice->sub_total) * 100, 2) : 0 }}">
                     </div>
-
-                    {{-- Toggle for New Customer Form --}}
-                    <div class="mb-3 text-center">
-                        <button type="button" id="toggleCustomerBtn" class="btn btn-link">
-                            <i class="bi bi-person-plus"></i> Or Add a New Customer
-                        </button>
+                    <div class="col-md-4">
+                        <label for="discount" class="form-label">Discount (%)</label>
+                        <input type="number" step="0.01" name="discount" id="discount" class="form-control" value="{{ isset($invoice) && $invoice->sub_total > 0 ? round(($invoice->discount / $invoice->sub_total) * 100, 2) : 0 }}">
                     </div>
-
-                    {{-- New Customer Form --}}
-                    <div id="customerSection" style="display: none;">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Customer Name <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" name="customer_name" value="{{ old('customer_name') }}"
-                                    class="form-control" placeholder="Enter customer name">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Email</label>
-                                <input type="email" name="customer_email" value="{{ old('customer_email') }}"
-                                    class="form-control" placeholder="Enter customer email">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Phone</label>
-                                <input type="text" name="customer_phone" value="{{ old('customer_phone') }}"
-                                    class="form-control" placeholder="Enter customer phone">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Address</label>
-                                <textarea name="customer_address" rows="2" class="form-control" placeholder="Enter address">{{ old('customer_address') }}</textarea>
-                            </div>
-                        </div>
+                    <div class="col-md-4">
+                        <label for="payment_received" class="form-label">Payment Received</label>
+                        <input type="number" step="0.01" name="payment_received" id="payment_received" class="form-control" value="{{ isset($invoice) ? $invoice->paid_amount : 0 }}">
                     </div>
+                </div>
 
-                    <div class="mb-3 col-md-4">
-                        <label class="form-label fw-semibold">Bill Date</label>
-                        <input type="date" name="bill_date" value="{{ old('bill_date', date('Y-m-d')) }}"
-                            class="form-control">
-                    </div>
+                <!-- Payment Mode -->
+                <div class="mb-3">
+                    <label for="payment_mode" class="form-label">Payment Mode</label>
+                    <select name="payment_mode" id="payment_mode" class="form-select" required>
+                        <option value="cash" @if(old('payment_mode', isset($invoice) ? $invoice->payment_mode : 'cash') == 'cash') selected @endif>Cash</option>
+                        <option value="online" @if(old('payment_mode', isset($invoice) ? $invoice->payment_mode : 'cash') == 'online') selected @endif>Online</option>
+                    </select>
+                </div>
 
-                    {{-- Bill Items --}}
-                    <h5 class="fw-bold mt-4">Bill Items</h5>
-                    <div class="table-responsive mb-3">
-                        <table class="table table-bordered align-middle text-center" id="itemsTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Product</th>
-                                    <th style="width: 100px;">Qty</th>
-                                    <th style="width: 150px;">Unit Price</th>
-                                    <th style="width: 150px;">Line Total</th>
-                                    <th style="width: 80px;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="item-row">
-                                    <td>
-                                        <select name="items[0][product_id]" class="form-control product-select" required>
-                                            <option value="">Select Product</option>
-                                        </select>
-                                        <input type="hidden" name="items[0][product_name]" class="product-name">
-                                    </td>
-                                    <td><input type="number" name="items[0][quantity]" min="1" value="1"
-                                            class="form-control qty" required></td>
-                                    <td><input type="number" name="items[0][unit_price]" step="0.01" min="0"
-                                            value="0.00" class="form-control price" required></td>
-                                    <td class="line-total text-end">0.00</td>
-                                    <td><button type="button" class="btn btn-sm btn-outline-danger remove-row">✖</button>
-                                    </td>
-                                </tr>
-                            </tbody>
+                <!-- Totals Display -->
+                <div class="row mb-3 justify-content-end">
+                    <div class="col-md-4">
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <th class="text-end"></th>Sub Total:</th>
+                                <td><input type="text" id="totalAmount" class="form-control form-control-sm text-end" readonly value="0.00"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-end">Final Total:</th>
+                                <td><input type="text" id="finalTotal" class="form-control form-control-sm text-end" readonly value="0.00"></td>
+                            </tr>
                         </table>
                     </div>
-                    <button type="button" id="addRow" class="btn btn-outline-primary mb-4">
-                        <i class="bi bi-plus-circle"></i> Add Item
-                    </button>
+                </div>
 
-                    {{-- Totals --}}
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Sub Total</label>
-                            <input type="text" id="grandTotal" readonly class="form-control bg-light" value="0.00">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Tax</label>
-                            <input type="number" name="tax" id="tax" step="0.01" min="0"
-                                value="{{ old('tax', 0) }}" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Discount</label>
-                            <input type="number" name="discount" id="discount" step="0.01" min="0"
-                                value="{{ old('discount', 0) }}" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold fs-5">Total Amount</label>
-                        <input type="text" id="total" readonly class="form-control bg-light fw-bold fs-5"
-                            value="0.00">
-                    </div>
-
-                    {{-- Payment Received --}}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Payment Received</label>
-                        <input type="number" name="payment_received" id="paymentReceived" step="0.01" min="0"
-                            value="{{ old('payment_received', 0) }}" class="form-control">
-                    </div>
-
-                    {{-- Due Amount --}}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Due Amount</label>
-                        <input type="text" id="dueAmount" readonly class="form-control bg-light" value="0.00">
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="submit" class="btn btn-success px-4">💾 Create Bill</button>
-                        <button type="submit" name="save_as_draft" value="1"
-                            class="btn btn-warning px-4 text-white">
-                            <i class="bi bi-file-earmark"></i> Save as Draft
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <!-- Submit Buttons -->
+                <div class="mt-3">
+                    <button type="submit" name="save_as_draft" value="1" class="btn btn-warning">Save as Draft</button>
+                    <button type="submit" class="btn btn-success ms-2">{{ isset($invoice) ? 'Update Invoice' : 'Create Invoice' }}</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    {{-- JavaScript --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('tax').addEventListener('input', recalc);
-            document.getElementById('discount').addEventListener('input', recalc);
-            const shopSelect = document.getElementById('shopSelect');
-            const itemsTbody = document.querySelector('#itemsTable tbody');
-            const addRowBtn = document.getElementById('addRow');
-            let currentProducts = [];
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let availableProducts = [];
 
-            function loadProducts(shopId, select) {
-                select.innerHTML = '<option value="">Select Product</option>';
-                if (!shopId) return;
-                fetch(`/api/products/by-shop/${shopId}`)
-                    .then(res => res.json())
-                    .then(products => {
-                        currentProducts = products;
-                        products.forEach(product => {
-                            let label = product.product_name ? product.product_name : product
-                                .product_id;
-                            select.innerHTML += `<option value="${product.id}">${label}</option>`;
-                        });
-                    });
+    // Toggle between existing and new customer fields
+    document.querySelectorAll('input[name="customer_type"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+            if (this.value === 'new') {
+                document.getElementById('new_customer_fields').style.display = 'block';
+                document.getElementById('existing_customer_fields').style.display = 'none';
+                document.getElementById('customer_id').removeAttribute('required');
+                document.querySelector('input[name="customer_name"]').setAttribute('required', 'required');
+            } else {
+                document.getElementById('new_customer_fields').style.display = 'none';
+                document.getElementById('existing_customer_fields').style.display = 'block';
+                document.getElementById('customer_id').setAttribute('required', 'required');
+                document.querySelector('input[name="customer_name"]').removeAttribute('required');
             }
-
-            function setPriceOnSelect(select, priceInput) {
-                select.addEventListener('change', function() {
-                    const selectedId = select.value;
-                    const product = currentProducts.find(p => p.id == selectedId);
-                    priceInput.value = product ? product.price : '';
-                    const productNameInput = select.closest('td').querySelector('.product-name');
-                    productNameInput.value = product ? product.product_name : '';
-                    recalc();
-                });
-            }
-
-            function attachRowEvents(row) {
-                row.querySelector('.qty').addEventListener('input', recalc);
-                row.querySelector('.price').addEventListener('input', recalc);
-                row.querySelector('.remove-row').addEventListener('click', function() {
-                    if (document.querySelectorAll('.item-row').length === 1) {
-                        row.querySelector('.qty').value = 1;
-                        row.querySelector('.price').value = '0.00';
-                    } else {
-                        row.remove();
-                    }
-                    recalc();
-                });
-            }
-
-            shopSelect.addEventListener('change', function() {
-                document.querySelectorAll('.item-row').forEach(row => {
-                    const select = row.querySelector('.product-select');
-                    const priceInput = row.querySelector('.price');
-                    loadProducts(shopSelect.value, select);
-                    setPriceOnSelect(select, priceInput);
-                });
-                recalc();
-            });
-
-            addRowBtn.addEventListener('click', function() {
-                let idx = document.querySelectorAll('.item-row').length;
-                let tr = document.createElement('tr');
-                tr.classList.add('item-row');
-                tr.innerHTML = `
-            <td>
-                <select name="items[${idx}][product_id]" class="form-control product-select" required>
-                    <option value="">Select Product</option>
-                </select>
-                <input type="hidden" name="items[${idx}][product_name]" class="product-name">
-            </td>
-            <td><input type="number" name="items[${idx}][quantity]" min="1" value="1" class="form-control qty" required></td>
-            <td><input type="number" name="items[${idx}][unit_price]" step="0.01" min="0" value="0.00" class="form-control price" required></td>
-            <td class="line-total text-end">0.00</td>
-            <td><button type="button" class="btn btn-sm btn-outline-danger remove-row">✖</button></td>
-        `;
-                itemsTbody.appendChild(tr);
-                const select = tr.querySelector('.product-select');
-                const priceInput = tr.querySelector('.price');
-                loadProducts(shopSelect.value, select);
-                setPriceOnSelect(select, priceInput);
-                attachRowEvents(tr);
-                recalc();
-            });
-
-            const firstRow = document.querySelector('.item-row');
-            const firstSelect = firstRow.querySelector('.product-select');
-            const firstPrice = firstRow.querySelector('.price');
-            loadProducts(shopSelect.value, firstSelect);
-            setPriceOnSelect(firstSelect, firstPrice);
-            attachRowEvents(firstRow);
-            recalc();
-
-            function recalc() {
-                let grandTotal = 0;
-
-                document.querySelectorAll('.item-row').forEach(row => {
-                    const qty = parseFloat(row.querySelector('.qty').value) || 0;
-                    const price = parseFloat(row.querySelector('.price').value) || 0;
-                    const lineTotal = qty * price;
-
-                    row.querySelector('.line-total').textContent = lineTotal.toFixed(2);
-                    grandTotal += lineTotal;
-                });
-
-                document.getElementById('grandTotal').value = grandTotal.toFixed(2);
-
-                const taxPercent = parseFloat(document.getElementById('tax').value) || 0;
-                const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
-
-                const taxAmount = (grandTotal * taxPercent) / 100;
-                const discountAmount = (grandTotal * discountPercent) / 100;
-
-                let finalTotal = grandTotal + taxAmount - discountAmount;
-
-                if (finalTotal < 0) finalTotal = 0;
-
-                document.getElementById('total').value = finalTotal.toFixed(2);
-
-                // Calculate Due Amount
-                const paymentReceived = parseFloat(document.getElementById('paymentReceived').value) || 0;
-                let dueAmount = finalTotal - paymentReceived;
-                if (dueAmount < 0) dueAmount = 0; // Due amount cannot be negative
-                document.getElementById('dueAmount').value = dueAmount.toFixed(2);
-            }
-
-            document.getElementById('discount').addEventListener('input', recalc);
-            document.getElementById('tax').addEventListener('input', recalc);
-            document.getElementById('paymentReceived').addEventListener('input', recalc);
-
-            const toggleCustomerBtn = document.getElementById('toggleCustomerBtn');
-            const customerSection = document.getElementById('customerSection');
-            const customerSelect = document.getElementById('customerSelect');
-            const customerNameInput = document.querySelector('input[name="customer_name"]');
-
-            toggleCustomerBtn.addEventListener('click', function() {
-                const isHidden = customerSection.style.display === 'none';
-                customerSection.style.display = isHidden ? 'block' : 'none';
-
-                if (isHidden) {
-                    customerSelect.required = false;
-                    customerSelect.value = ''; // Clear selection
-                    customerNameInput.required = true;
-                    toggleCustomerBtn.innerHTML = '<i class="bi bi-person-check"></i> Select Existing Customer';
-                } else {
-                    customerSelect.required = true;
-                    customerNameInput.required = false;
-                    // Clear new customer fields
-                    customerNameInput.value = '';
-                    document.querySelector('input[name="customer_email"]').value = '';
-                    document.querySelector('input[name="customer_phone"]').value = '';
-                    document.querySelector('textarea[name="customer_address"]').value = '';
-                    toggleCustomerBtn.innerHTML = '<i class="bi bi-person-plus"></i> Or Add a New Customer';
-                }
-            });
         });
-    </script>
+    });
+
+    // Fetch Products when Shop Changes
+    const shopSelect = document.getElementById('shop_id');
+    if (shopSelect) {
+        shopSelect.addEventListener('change', function() {
+            fetchProducts(this.value);
+        });
+        // Initial load if shop is selected (e.g. edit mode)
+        if (shopSelect.value) {
+            fetchProducts(shopSelect.value);
+        }
+    }
+
+    function fetchProducts(shopId) {
+        if (!shopId) {
+            availableProducts = [];
+            return;
+        }
+        fetch(`{{ url('/get-products-by-shop') }}/${shopId}`)
+            .then(response => response.json())
+            .then(data => {
+                availableProducts = data;
+                // Populate all existing product selects (including prefilled ones in edit mode)
+                document.querySelectorAll('.product-select').forEach(select => populateSelect(select));
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    }
+
+    function populateSelect(selectElement) {
+        let currentVal = selectElement.value;
+        let html = '<option value="">Select Product</option>';
+        availableProducts.forEach(product => {
+            let isSelected = (product.id == currentVal) ? 'selected' : '';
+            html += `<option value="${product.id}" data-price="${product.price}" ${isSelected}>${product.product_name}</option>`;
+        });
+        selectElement.innerHTML = html;
+        // Update hidden product_name if selected
+        let selectedOption = selectElement.options[selectElement.selectedIndex];
+        let productNameInput = selectElement.parentElement.querySelector('input[name*="[product_name]"]');
+        if (productNameInput && selectedOption) {
+            productNameInput.value = selectedOption.text;
+        }
+    }
+
+    // Add Item Row
+    document.getElementById('addItem').addEventListener('click', function() {
+        let index = document.querySelectorAll('#itemsBody tr').length;
+        let row = `
+            <tr>
+                <td>
+                    <select name="items[${index}][product_id]" class="form-select product-select" required>
+                        <option value="">Select Product</option>
+                    </select>
+                    <input type="hidden" name="items[${index}][product_name]" value="">
+                </td>
+                <td><input type="number" name="items[${index}][quantity]" class="form-control quantity" value="1" min="1" required></td>
+                <td><input type="number" step="0.01" name="items[${index}][unit_price]" class="form-control unit-price" value="0.00" required></td>
+                <td><input type="number" step="0.01" class="form-control line-total" value="0.00" readonly></td>
+                <td><button type="button" class="btn btn-danger btn-sm remove-item">Remove</button></td>
+            </tr>
+        `;
+        document.getElementById('itemsBody').insertAdjacentHTML('beforeend', row);
+        
+        // Populate the new select
+        let newSelect = document.querySelector('#itemsBody tr:last-child .product-select');
+        populateSelect(newSelect);
+        recalculateTotals();
+    });
+
+    // Remove Item Row
+    document.getElementById('itemsBody').addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-item')) {
+            e.target.closest('tr').remove();
+            recalculateTotals();
+        }
+    });
+
+    // Handle Product Selection (Update Price and Product Name)
+    document.getElementById('itemsBody').addEventListener('change', function(e) {
+        if (e.target.classList.contains('product-select')) {
+            let option = e.target.options[e.target.selectedIndex];
+            let price = option.getAttribute('data-price') || 0;
+            let row = e.target.closest('tr');
+            row.querySelector('.unit-price').value = price;
+            // Update hidden product_name
+            let productNameInput = row.querySelector('input[name*="[product_name]"]');
+            if (productNameInput) {
+                productNameInput.value = option.text;
+            }
+            updateLineTotal(row);
+        }
+    });
+
+    // Handle Input Changes (Quantity, Price)
+    document.getElementById('itemsBody').addEventListener('input', function(e) { 
+        if (e.target.classList.contains('quantity') || e.target.classList.contains('unit-price')) {
+            updateLineTotal(e.target.closest('tr'));
+        }
+    });
+
+    function updateLineTotal(row) {
+        let qty = parseFloat(row.querySelector('.quantity').value) || 0;
+        let price = parseFloat(row.querySelector('.unit-price').value) || 0;
+        let total = qty * price;
+        row.querySelector('.line-total').value = total.toFixed(2);
+        recalculateTotals();
+    }
+
+    function recalculateTotals() {
+        let grandTotal = 0;
+        document.querySelectorAll('.line-total').forEach(function(el) {
+            grandTotal += parseFloat(el.value) || 0;
+        });
+        
+        let totalEl = document.getElementById('totalAmount');
+        if(totalEl) totalEl.value = grandTotal.toFixed(2);
+
+        // Calculate tax and discount
+        let taxPercent = parseFloat(document.getElementById('tax').value) || 0;
+        let discountPercent = parseFloat(document.getElementById('discount').value) || 0;
+        
+        let taxAmount = (grandTotal * taxPercent) / 100;
+        let discountAmount = (grandTotal * discountPercent) / 100;
+        
+        let finalTotal = grandTotal + taxAmount - discountAmount;
+
+        let finalEl = document.getElementById('finalTotal');
+        if(finalEl) finalEl.value = (finalTotal > 0 ? finalTotal : 0).toFixed(2);
+    }
+
+    // Listen for changes in Tax/Discount/Payment to update totals
+    document.getElementById('tax').addEventListener('input', recalculateTotals);
+    document.getElementById('discount').addEventListener('input', recalculateTotals);
+
+    // Initial calculation
+    recalculateTotals();
+});
+</script>
 @endsection

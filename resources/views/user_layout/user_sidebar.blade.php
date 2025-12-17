@@ -21,7 +21,7 @@
             <ul class="collapse list-unstyled submenu" id="customerSubmenu">
                 <li><a class="nav-link" href="{{ route('add_customer') }}"><i class="bi bi-dot"></i> Add Customer</a></li>
                 <li><a class="nav-link" href="{{ route('manage_customers') }}"><i class="bi bi-dot"></i> Manage Customers</a></li>
-                <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Customer History</a></li>
+                {{-- <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Customer History</a></li> --}}
             </ul>
         </li>
 
@@ -33,7 +33,7 @@
             <ul class="collapse list-unstyled submenu" id="invoiceSubmenu">
                 <li><a class="nav-link" href="{{ route('make_new_invoice') }}"><i class="bi bi-dot"></i> Create New Invoice</a></li>
                 <li><a class="nav-link" href="{{ route('list_invoices') }}"><i class="bi bi-dot"></i> Invoice List (all bills)</a></li>
-                <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Pending Payments</a></li>
+                {{-- <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Pending Payments</a></li> --}}
                 <li><a class="nav-link" href="{{ route('draft_invoice_list') }}"><i class="bi bi-dot"></i> Draft Invoices</a></li>
             </ul>
         </li>
@@ -61,7 +61,7 @@
                 <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Stock Alerts</a></li>
             </ul>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link collapsed" href="#reportSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="reportSubmenu">
                 <i class="bi bi-journal-text me-2"></i> <span>Reports</span>
                 <i class="bi bi-chevron-down arrow ms-auto"></i>
@@ -82,7 +82,7 @@
             <ul class="collapse list-unstyled submenu" id="notifSubmenu">
                  <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Reminders (payments due)</a></li>
             </ul>
-        </li>
+        </li> --}}
     </ul>
     </div>
 </nav>

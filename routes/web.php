@@ -32,6 +32,10 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::post('/login', [UserRegistrationController::class, 'user_login'])->name('user_login');
+Route::get('/forget_password',[UserRegistrationController::class, 'forget_password_form'])->name('forget_password_form');
+Route::post('/send_code', [UserRegistrationController::class, 'send_code'])->name('send_code');
+Route::get('/verify_otp', [UserRegistrationController::class, 'verify_otp_form'])->name('verify_otp_form');
+Route::post('/forgot-password/verify', [UserRegistrationController::class, 'verify_code'])->name('verify_code');
 // Route::get('/signup', function () {
 //     return view('login&signup.signup');
 // })->name('signup');
@@ -117,7 +121,11 @@ Route::middleware(['auth:cuser'])->group(function () {
     Route::post('/store_invoice', [InvoiceController::class, 'store_invoice'])->name('store_invoice');
     Route::get('/show_invoice/{id}', [InvoiceController::class, 'show_invoice'])->name('show_invoice');
     Route::get('/invoices', [InvoiceController::class, 'list_invoices'])->name('list_invoices');
-    Route::get('/draft_invoices', [InvoiceController::class, 'draft_invoice_list'])->name('draft_invoice_list');   
+    Route::get('/draft_invoices', [InvoiceController::class, 'draft_invoice_list'])->name('draft_invoice_list');
+    Route::get('/edit_invoice/{id}', [InvoiceController::class, 'edit_invoice'])->name('edit_invoice');
+    Route::post('/submit_draft/{id}', [InvoiceController::class, 'submit_draft'])->name('submit_draft');
+    Route::put('/update-invoice/{id}', [InvoiceController::class, 'update_invoice'])->name('update_invoice');
+    Route::get('/get-products-by-shop/{shopId}', [InvoiceController::class, 'getProductsByShop'])->name('get_products_by_shop');
 });
 
 Route::middleware(['auth:cuser'])->group(function () {
@@ -128,6 +136,8 @@ Route::middleware(['auth:cuser'])->group(function () {
     Route::get('/api/products/by-shop/{shop}', function($shopId) {
     return ProductModel::where('shop_id', $shopId)->get(['id', 'product_name', 'product_id', 'price']);
     });
+    Route::get('/edit_products/{id}', [ProductController::class,'edit_products'])->name('edit_products');
+    Route::put('/update_products/{id}', [ProductController::class,'update_products'])->name('update_products');
 
 });
 
@@ -136,5 +146,3 @@ Route::middleware(['auth:cuser'])->group(function () {
     Route::get('payments_dues',[PaymentController::class,'paymentsDues'])->name('payments_dues');
     Route::post('store_payment',[PaymentController::class,'storePayment'])->name('store_payment');
 });
-
-

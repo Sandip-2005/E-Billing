@@ -54,7 +54,7 @@
 
                     <!-- Form Actions -->
                     <div class="form-actions mt-4">
-                        <button type="button" class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-secondary"><a style="text-decoration: none; color: inherit;" href="{{ route('user_dashboard') }}">Cancel</a></button>
                         <button type="submit" class="btn btn-primary">Save Customer</button>
                     </div>
 

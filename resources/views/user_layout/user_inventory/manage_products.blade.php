@@ -27,6 +27,7 @@
                             <th>Product Name</th>
                             <th>Price (₹)</th>
                             <th>Quantity</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,11 @@
                                 <td>{{ $product->product_name ?? '-' }}</td>
                                 <td>₹{{ number_format($product->price, 2) }}</td>
                                 <td>{{ $product->quantity }}</td>
+                                <td>
+                                    <a href="{{ route('edit_products', $product->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>

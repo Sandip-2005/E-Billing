@@ -42,6 +42,9 @@
                                     <a href="{{ route('show_invoice', $invoice->id) }}" class="btn btn-sm btn-outline-primary" title="View">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    <a href="{{ route('edit_invoice', $invoice->id) }}" class="btn btn-sm btn-outline-secondary ms-1" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @empty

@@ -167,7 +167,7 @@
     </form>
 
     <div class="text-center mt-4 login-link">
-        <p class="text-muted">Already have an account? <a href="#">Login here</a></p>
+        <p class="text-muted">Already have an account? <a href="{{ route('user_login') }}">Login here</a></p>
     </div>
 
 </div>

@@ -47,7 +47,7 @@
                         </div>
                         <div>
                             <h4 class="card-title mb-1">{{ number_format($totalPayments ?? 0.00, 2) }}</h4>
-                            <p class="card-text mb-0">Payments Collected</p>
+                            <p class="card-text mb-0">Payments Collected Today</p>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
             </div>
 
             <!-- Overdue Invoices -->
-            <div class="col-xl col-md-6">
+            {{-- <div class="col-xl col-md-6">
                 <div class="card kpi-card kpi-card-red h-100">
                     <div class="card-body d-flex align-items-center">
                         <div class="kpi-icon me-3">
@@ -82,7 +82,7 @@
                     </div>
                 </div>
             </div>
-        </div> <!-- .row -->
+        </div> <!-- .row --> --}}
 
 
         <!-- =================================== -->

@@ -63,4 +63,34 @@ class ProductController extends Controller
 
         return view('user_layout.user_inventory.manage_products', compact('products', 'shops', 'shop_id'));
     }
+
+    public function edit_products($id)
+    {
+        $product = ProductModel::where('user_id', auth()->id())->findOrFail($id);
+        $shops = ShopModel::where('user_id', auth()->id())->get();
+        return view('user_layout.user_inventory.edit_products', compact('product', 'shops'));
+    }
+
+    public function update_products(Request $request, $id)
+    {
+        $request->validate([
+            'shop_id' => 'required|exists:shop_profile,id',
+            'product_id' => 'nullable|string',
+            'product_name' => 'nullable|string',
+            'price' => 'required|numeric',
+            'quantity' => 'required|integer',
+        ]);
+
+        $product = ProductModel::where('user_id', auth()->id())->findOrFail($id);
+
+        $product->update([
+            'shop_id' => $request->shop_id,
+            'product_id' => $request->product_id,
+            'product_name' => $request->product_name,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+        ]);
+
+        return redirect()->route('manage_products')->with('success', 'Product updated successfully!');
+    }
 }

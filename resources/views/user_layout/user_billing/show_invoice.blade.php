@@ -123,6 +123,15 @@
                 <p>Thank you for your business!</p>
                 <small>Generated on {{ now()->format('d M, Y h:i A') }}</small>
             </div>
+
+            @if($bill->status == 'draft')
+            <div class="text-center mt-3">
+                <form action="{{ route('submit_draft', $bill->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-success">Submit Invoice</button>
+                </form>
+            </div>
+            @endif
         </div>
     </div>
 </div>

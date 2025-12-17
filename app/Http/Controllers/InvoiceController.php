@@ -32,6 +32,7 @@ class InvoiceController extends Controller
             'bill_date' => 'required|date',
             'items' => 'required|array|min:1',
             'payment_received' => 'nullable|numeric|min:0',
+            'payment_mode' => 'required|string|in:cash,online',
         ]);
 
         DB::beginTransaction();
@@ -59,9 +60,11 @@ class InvoiceController extends Controller
 
             // Calculate totals
             $subTotal = $this->calculateSubTotal($request->items);
-            $tax = $request->tax ?? 0;
-            $discount = $request->discount ?? 0;
-            $finalTotal = $this->calculateTotal($request->items, $tax, $discount);
+            $taxPercent = $request->tax ?? 0;
+            $discountPercent = $request->discount ?? 0;
+            $taxAmount = ($subTotal * $taxPercent) / 100;
+            $discountAmount = ($subTotal * $discountPercent) / 100;
+            $finalTotal = max(0, $subTotal + $taxAmount - $discountAmount);
 
             // Handle payment received logic
             $paymentReceived = $request->input('payment_received', 0);
@@ -86,10 +89,11 @@ class InvoiceController extends Controller
                 'shop_address' => $shop->shop_address,
                 'bill_date' => $request->bill_date,
                 'sub_total' => $subTotal,
-                'tax' => $tax,
-                'discount' => $discount,
+                'tax' => $taxAmount,
+                'discount' => $discountAmount,
                 'total' => $finalTotal,
                 'status' => $invoiceStatus,
+                'payment_mode'=>$request->payment_mode,
                 'due_amount' => $dueAmount, // Add due_amount to invoice
             ]);
 
@@ -189,5 +193,183 @@ class InvoiceController extends Controller
         return view('user_layout.user_billing.draft_invoice_list', [
             'draftInvoices' => $draftInvoices
         ]);
+    }
+    
+    public function edit_invoice($id)
+    {
+        $invoice = InvoiceModel::with(['items', 'customer', 'shop'])->findOrFail($id);
+        if ($invoice->status !== 'draft') {
+            abort(403, 'Only draft invoices can be edited.');
+        }
+        $user = Auth::guard('cuser')->user();
+        $shops = $user->shops;
+        $customers = $user->customers;
+
+        return view('user_layout.user_billing.make_new_invoice', [
+            'shops' => $shops,
+            'customers' => $customers,
+            'invoice' => $invoice, // Pass invoice data for prefill
+        ]);
+    }
+
+    public function submit_draft($id)
+    {
+        $invoice = InvoiceModel::findOrFail($id);
+        if ($invoice->status !== 'draft') {
+            return back()->withErrors(['error' => 'Only draft invoices can be submitted.']);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Recalculate totals if needed (assuming no changes)
+            $paymentReceived = $invoice->paid_amount ?? 0;
+            $dueAmount = max(0, $invoice->total - $paymentReceived);
+
+            $status = 'unpaid';
+            if ($paymentReceived >= $invoice->total) {
+                $status = 'paid';
+            } elseif ($paymentReceived > 0) {
+                $status = 'partially_paid';
+            }
+
+            $invoice->update([
+                'status' => $status,
+                'due_amount' => $dueAmount,
+            ]);
+
+            // If there's an initial payment, ensure it's recorded (already handled in store_invoice)
+            DB::commit();
+            return redirect()->route('show_invoice', $id)->with('success', 'Invoice submitted successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to submit invoice: ' . $e->getMessage()]);
+        }
+    }
+
+    public function update_invoice(Request $request, $id)
+    {
+        $invoice = InvoiceModel::with('items')->findOrFail($id);
+        if ($invoice->status !== 'draft') {
+            abort(403, 'Only draft invoices can be updated.');
+        }
+
+        $request->validate([
+            'shop_id' => 'required|exists:shop_profile,id',
+            'bill_date' => 'required|date',
+            'items' => 'required|array|min:1',
+            'payment_received' => 'nullable|numeric|min:0',
+            'payment_mode' => 'required|string|in:cash,online',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Restore old stock
+            foreach ($invoice->items as $oldItem) {
+                $product = ProductModel::find($oldItem->product_id);
+                if ($product) {
+                    $product->quantity += $oldItem->quantity;
+                    $product->save();
+                }
+            }
+
+            // Delete old items
+            InvoiceItemModel::where('bill_id', $id)->delete();
+
+            // Handle customer (similar to store_invoice)
+            if ($request->has('customer_name') && $request->customer_name !== null) {
+                $customer = AddCustomer::create([
+                    'user_id' => Auth::guard('cuser')->id(),
+                    'customer_name' => $request->customer_name,
+                    'email' => $request->customer_email,
+                    'phone_number' => $request->customer_phone,
+                    'address' => $request->customer_address,
+                ]);
+                $customer_id = $customer->id;
+            } else {
+                $customer_id = $request->customer_id;
+            }
+
+            $shop = ShopModel::findOrFail($request->shop_id);
+            $subTotal = $this->calculateSubTotal($request->items);
+            $taxPercent = $request->tax ?? 0;
+            $discountPercent = $request->discount ?? 0;
+            $taxAmount = ($subTotal * $taxPercent) / 100;
+            $discountAmount = ($subTotal * $discountPercent) / 100;
+            $finalTotal = max(0, $subTotal + $taxAmount - $discountAmount);
+            $paymentReceived = $request->input('payment_received', 0);
+            $dueAmount = max(0, $finalTotal - $paymentReceived);
+
+            $isDraft = $request->input('save_as_draft') ? true : false;
+            $invoiceStatus = $isDraft ? 'draft' : ($paymentReceived >= $finalTotal ? 'paid' : ($paymentReceived > 0 ? 'partially_paid' : 'unpaid'));
+
+            // Update invoice
+            $invoice->update([
+                'shop_id' => $request->shop_id,
+                'customer_id' => $customer_id,
+                'shop_phone' => $shop->shop_contact,
+                'shop_gst' => $shop->gst_number,
+                'shop_address' => $shop->shop_address,
+                'bill_date' => $request->bill_date,
+                'sub_total' => $subTotal,
+                'tax' => $taxAmount,
+                'discount' => $discountAmount,
+                'total' => $finalTotal,
+                'status' => $invoiceStatus,
+                'payment_mode' => $request->payment_mode,
+                'due_amount' => $dueAmount,
+            ]);
+
+            // Handle payment (delete old, add new if not draft)
+            PaymentsModel::where('invoice_id', $id)->delete();
+            if ($paymentReceived > 0 && !$isDraft) {
+                PaymentsModel::create([
+                    'invoice_id' => $id,
+                    'customer_id' => $customer_id,
+                    'amount' => $paymentReceived,
+                    'payment_date' => now(),
+                    'note' => 'Updated payment',
+                    'due_amount' => $dueAmount,
+                    'payment_status' => ($paymentReceived >= $finalTotal) ? 'paid' : 'partially_paid',
+                ]);
+            }
+
+            // Add new items and deduct stock
+            foreach ($request->items as $item) {
+                $product = ProductModel::find($item['product_id']);
+                if (!$product || $product->quantity < $item['quantity']) {
+                    throw new \Exception("Insufficient stock for product: {$product->product_name}");
+                }
+
+                $lineTotal = $item['quantity'] * $item['unit_price'];
+                InvoiceItemModel::create([
+                    'bill_id' => $id,
+                    'product_id' => $item['product_id'],
+                    'product_name' => $item['product_name'] ?? $product->product_name,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'line_total' => $lineTotal,
+                ]);
+
+                $product->quantity -= $item['quantity'];
+                $product->save();
+            }
+
+            DB::commit();
+            if($request->input('save_as_draft')){
+                return redirect()->route('draft_invoice_list')->with('success', 'Invoice updated and saved as draft!');
+            }
+            else{
+                return redirect()->route('show_invoice', $id)->with('success', 'Invoice updated successfully!');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to update invoice: ' . $e->getMessage()]);
+        }
+    }
+
+    public function getProductsByShop($shopId)
+    {
+        $products = ProductModel::where('shop_id', $shopId)->get(['id', 'product_name', 'quantity', 'price']); // Ensure 'price' field exists; if it's 'unit_price', change accordingly
+        return response()->json($products);
     }
 }
