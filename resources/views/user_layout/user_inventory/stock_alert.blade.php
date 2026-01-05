@@ -10,7 +10,7 @@
                 </a>
             </div>
             <div class="card-body">
-                <form method="GET" action="{{ route('manage_products') }}" class="mb-3">
+                <form method="GET" action="{{ route('stock_alert') }}" class="mb-3">
                     <label for="shop_id" class="form-label">Filter by Shop:</label>
                     <select name="shop_id" id="shop_id" class="form-control" onchange="this.form.submit()">
                         <option value="">All Shops</option>

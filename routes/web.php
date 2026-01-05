@@ -126,6 +126,10 @@ Route::middleware(['auth:cuser'])->group(function () {
     Route::post('/submit_draft/{id}', [InvoiceController::class, 'submit_draft'])->name('submit_draft');
     Route::put('/update-invoice/{id}', [InvoiceController::class, 'update_invoice'])->name('update_invoice');
     Route::get('/get-products-by-shop/{shopId}', [InvoiceController::class, 'getProductsByShop'])->name('get_products_by_shop');
+    Route::get('/invoice/{id}/download', [InvoiceController::class, 'downloadInvoice']) ->name('invoice_download');
+    Route::get('/invoice/{id}/mail', [InvoiceController::class, 'invoice_mail']) ->name('invoice_mail');
+    Route::get('/get-batches/{product}', [InvoiceController::class, 'products_batches'])->name('products_batches');
+
 });
 
 Route::middleware(['auth:cuser'])->group(function () {
@@ -138,6 +142,8 @@ Route::middleware(['auth:cuser'])->group(function () {
     });
     Route::get('/edit_products/{id}', [ProductController::class,'edit_products'])->name('edit_products');
     Route::put('/update_products/{id}', [ProductController::class,'update_products'])->name('update_products');
+    Route::get('/delete_products/{id}', [ProductController::class,'delete_products'])->name('delete_products');
+    Route::get('/stock_alert', [ProductController::class,'stock_alert'])->name('stock_alert');
 
 });
 

@@ -10,7 +10,8 @@
         </div>
 
         <!-- Add Bootstrap Navbar Toggler for mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <!-- <span class="navbar-toggler-icon"></span> -->
             <i class="bi bi-person fs-5"></i>
         </button>
@@ -19,11 +20,14 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle user-dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle user-dropdown-toggle d-flex align-items-center" href="#"
+                        id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- User Name -->
-                        <span>{{Auth::guard('cuser')->user()->name}}</span>
+                        <span>{{ Auth::guard('cuser')->user()->name }}</span>
 
-                        <img src="{{ asset(Auth::guard('cuser')->user()->user_image) }}" alt="User" class="profile-pictures rounded-circle" style="object-fit: cover; width: 40px; height: 40px; margin-left: 5px;">
+                        <img src="{{ asset(Auth::guard('cuser')->user()->user_image) }}" alt="{{ asset('storage/user_images/user.png') }}"
+                            class="profile-pictures rounded-circle"
+                            style="object-fit: cover; width: 40px; height: 40px;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li>

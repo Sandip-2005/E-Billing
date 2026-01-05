@@ -58,7 +58,7 @@
             <ul class="collapse list-unstyled submenu" id="inventorySubmenu">
                 <li><a class="nav-link" href="{{ route('add_products') }}"><i class="bi bi-dot"></i> Add Products</a></li>
                 <li><a class="nav-link" href="{{ route('manage_products') }}"><i class="bi bi-dot"></i> Manage Products</a></li>
-                <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Stock Alerts</a></li>
+                <li><a class="nav-link" href="{{ route('stock_alert') }}"><i class="bi bi-dot"></i> Stock Alerts</a></li>
             </ul>
         </li>
         {{-- <li class="nav-item">

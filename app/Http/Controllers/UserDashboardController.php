@@ -33,7 +33,6 @@ class UserDashboardController extends Controller
         $cash=InvoiceModel::where('user_id', Auth::guard('cuser')->id())
             ->where('payment_mode', 'Cash')
             ->count();
-
         // Monthly Revenue Chart Data (Last 7 Months)
         $revenueChartLabels = [];
         $revenueChartData = [];

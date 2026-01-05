@@ -39,14 +39,18 @@ class UserRegistrationController extends Controller
             'confirm_password' => 'required|string|same:password|max:100'
         ]);
 
-        $user_image_path = 'default-avatar.png'; // Set a default image path
+        $user_image_path = 'user_images/user.png'; // default
+
         if ($request->hasFile('user_image')) {
             $image = $request->file('user_image');
             $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('user_images', $imageName, 'public');
-            $user_image_path = 'storage/user_images/' . $imageName;
-        }
 
+            // store in storage/app/public/user_images
+            $image->storeAs('user_images', $imageName, 'public');
+
+            // save ONLY relative path
+            $user_image_path = 'user_images/' . $imageName;
+        }
         $user = UserModel::create([
             'name'     => $request->name,
             'username' => $request->username,
@@ -143,7 +147,7 @@ class UserRegistrationController extends Controller
             $image = $request->file('user_image');
             $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
             $image->storeAs('user_images', $imageName, 'public');
-            $user_image_path = 'storage/user_images/' . $imageName;
+            $user_image_path = 'user_images/' . $imageName;
         }
 
         if ($request->filled('name')) {
@@ -228,6 +232,8 @@ class UserRegistrationController extends Controller
             return back()->with('fail', 'Failed to send email. Please check your mail configuration or try again later.');
         }
 
+        $request->session()->put('reset_email', $request->email);
+
         return redirect()->route('verify_otp_form')->with(['email' => $request->email, 'success' => 'Verification code sent to your email.']);
     }
 
@@ -238,10 +244,14 @@ class UserRegistrationController extends Controller
 
     public function verify_Code(Request $request)
     {
+        if (!$request->filled('email') && $request->session()->has('reset_email')) {
+            $request->merge(['email' => $request->session()->get('reset_email')]);
+        }
+
         $request->validate([
             'email' => 'required|email|exists:user_signup,email',
             'code'  => 'required|string|size:6',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|confirmed'
         ]);
 
         $record = DB::table('password_reset_codes')
@@ -264,6 +274,7 @@ class UserRegistrationController extends Controller
         ]);
 
         DB::table('password_reset_codes')->where('email', $request->email)->delete();
+        $request->session()->forget('reset_email');
 
         return redirect()->route('login')->with('success', 'Password reset successful. Please login with your new password.');
     }

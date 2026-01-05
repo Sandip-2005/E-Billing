@@ -96,7 +96,7 @@ class PaymentController extends Controller
         
 
         $invoices = $query->latest('bill_date')
-            ->paginate(50)
+            ->paginate(15)
             ->appends($request->except('page'));
 
         $filters = $request->only(['date_from', 'date_to', 'customer_id', 'shop_id', 'status']);

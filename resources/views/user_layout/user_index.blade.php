@@ -40,6 +40,7 @@
             <!-- Page-specific Content -->
             <main class="p-4">
                 @yield('content')
+                @yield('pagination')
             </main>
 
         </div>

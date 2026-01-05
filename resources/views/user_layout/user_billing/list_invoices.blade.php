@@ -52,11 +52,8 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="d-flex justify-content-center mt-3">
-                {{ $invoices->links() }}
-            </div>
         </div>
+        {{ $invoices->links() }}
     </div>
 </div>
 @endsection

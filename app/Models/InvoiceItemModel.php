@@ -13,11 +13,21 @@ class InvoiceItemModel extends Model
     protected $table = 'bill_items';
 
     protected $fillable = [
-        'bill_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'line_total'
+        'bill_id', 'product_id', 'batch_id', 'product_name', 'quantity', 'unit_price', 'line_total'
     ];
 
     public function bill()
     {
         return $this->belongsTo(InvoiceModel::class);
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(ProductBatch::class, 'batch_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(ProductModel::class, 'product_id');
     }
 }
