@@ -14,13 +14,13 @@
 
             <ul class="navbar-nav nav-middle mb-1 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ route('index') }}">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{{ route('home') }}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('about_us') }}">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Services</a>
+                    <a class="nav-link" href="{{ route('services') }}">Services</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('contact_us') }}">Contact</a>

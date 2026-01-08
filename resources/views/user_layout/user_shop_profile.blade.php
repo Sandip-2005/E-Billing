@@ -25,7 +25,7 @@
                         <div class="row">
                             <div class="col-md-3 text-center mb-3 mb-md-0">
                                 @if ($shop->shop_logo)
-                                    <img src="{{ asset($shop->shop_logo) }}" alt="Shop Logo" class="img-fluid rounded"
+                                    <img src="{{ asset('storage/'.$shop->shop_logo) }}" alt="Shop Logo" class="img-fluid rounded"
                                         style="max-width: 150px; height: auto;">
                                 @else
                                     <div class="border rounded p-3 text-muted">

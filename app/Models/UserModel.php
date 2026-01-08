@@ -25,7 +25,8 @@ class UserModel extends Authenticatable
         'district',
         'state',
         'pincode',
-        'password'
+        'password',
+        'is_verified'
     ];
 
     public function customers()

@@ -36,7 +36,6 @@
 
 
 
-
     <footer class="footer pt-5 pb-4">
         @include('layout.footer')
     </footer>

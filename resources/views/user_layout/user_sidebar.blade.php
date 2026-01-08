@@ -1,64 +1,64 @@
 <nav class="sidebar-light">
     <div class="sidebar-header">
-        <a href="{{ route('user_dashboard') }}" class="d-flex align-items-center text-decoration-none text-dark">
+        <a href="{{ route('user_dashboard') }}" class="d-flex align-items-center text-decoration-none text-dark" style="color: #007bff;">
             <i class="bi bi-receipt-cutoff me-2 fs-5"></i>
-            <h5 class="mb-0">E-Billing</h5>
+            <h5 class="mb-0" style="color: #007bff;">E-Billing</h5>
         </a>
     </div>
     <div class="sidebar-body">
         <ul class="nav flex-column sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('user_dashboard') }}">
+            <a class="nav-link active" href="{{ route('user_dashboard') }}" style="color: #007bff;">
                 <i class="bi bi-house-dash-fill me-2"></i> <span>Dashboard</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#customerSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="customerSubmenu">
+            <a class="nav-link collapsed" href="#customerSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="customerSubmenu" style="color: #495057;">
                 <i class="bi bi-people-fill me-2"></i> <span>Customers</span>
                 <i class="bi bi-chevron-down arrow ms-auto"></i>
             </a>
             <ul class="collapse list-unstyled submenu" id="customerSubmenu">
-                <li><a class="nav-link" href="{{ route('add_customer') }}"><i class="bi bi-dot"></i> Add Customer</a></li>
-                <li><a class="nav-link" href="{{ route('manage_customers') }}"><i class="bi bi-dot"></i> Manage Customers</a></li>
+                <li><a class="nav-link" href="{{ route('add_customer') }}" style="color: #495057;"><i class="bi bi-dot"></i> Add Customer</a></li>
+                <li><a class="nav-link" href="{{ route('manage_customers') }}" style="color: #495057;"><i class="bi bi-dot"></i> Manage Customers</a></li>
                 {{-- <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Customer History</a></li> --}}
             </ul>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#invoiceSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="invoiceSubmenu">
+            <a class="nav-link collapsed" href="#invoiceSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="invoiceSubmenu" style="color: #495057;">
                 <i class="bi bi-receipt me-2"></i> <span>Billing / Invoices</span>
                 <i class="bi bi-chevron-down arrow ms-auto"></i>
             </a>
             <ul class="collapse list-unstyled submenu" id="invoiceSubmenu">
-                <li><a class="nav-link" href="{{ route('make_new_invoice') }}"><i class="bi bi-dot"></i> Create New Invoice</a></li>
-                <li><a class="nav-link" href="{{ route('list_invoices') }}"><i class="bi bi-dot"></i> Invoice List (all bills)</a></li>
+                <li><a class="nav-link" href="{{ route('make_new_invoice') }}" style="color: #495057;"><i class="bi bi-dot"></i> Create New Invoice</a></li>
+                <li><a class="nav-link" href="{{ route('list_invoices') }}" style="color: #495057;"><i class="bi bi-dot"></i> Invoice List (all bills)</a></li>
                 {{-- <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Pending Payments</a></li> --}}
-                <li><a class="nav-link" href="{{ route('draft_invoice_list') }}"><i class="bi bi-dot"></i> Draft Invoices</a></li>
+                <li><a class="nav-link" href="{{ route('draft_invoice_list') }}" style="color: #495057;"><i class="bi bi-dot"></i> Draft Invoices</a></li>
             </ul>
         </li>
         
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#paymentSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="paymentSubmenu">
+            <a class="nav-link collapsed" href="#paymentSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="paymentSubmenu" style="color: #495057;">
                 <i class="bi bi-credit-card-fill me-2"></i> <span>Payments</span>
                 <i class="bi bi-chevron-down arrow ms-auto"></i>
             </a>
             <ul class="collapse list-unstyled submenu" id="paymentSubmenu">
                 {{-- <li><a class="nav-link" href="#"><i class="bi bi-dot"></i> Record Payment</a></li> --}}
-                <li><a class="nav-link" href="{{ route('payment_history') }}"><i class="bi bi-dot"></i> Payment History</a></li>
-                <li><a class="nav-link" href="{{ route('payments_dues') }}"><i class="bi bi-dot"></i> Dues/Outstanding</a></li>
+                <li><a class="nav-link" href="{{ route('payment_history') }}" style="color: #495057;"><i class="bi bi-dot"></i> Payment History</a></li>
+                <li><a class="nav-link" href="{{ route('payments_dues') }}" style="color: #495057;"><i class="bi bi-dot"></i> Dues/Outstanding</a></li>
             </ul>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#inventorySubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="inventorySubmenu">
+            <a class="nav-link collapsed" href="#inventorySubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="inventorySubmenu" style="color: #495057;">
                 <i class="bi bi-box-seam me-2"></i> <span>Inventory</span>
                 <i class="bi bi-chevron-down arrow ms-auto"></i>
             </a>
             <ul class="collapse list-unstyled submenu" id="inventorySubmenu">
-                <li><a class="nav-link" href="{{ route('add_products') }}"><i class="bi bi-dot"></i> Add Products</a></li>
-                <li><a class="nav-link" href="{{ route('manage_products') }}"><i class="bi bi-dot"></i> Manage Products</a></li>
-                <li><a class="nav-link" href="{{ route('stock_alert') }}"><i class="bi bi-dot"></i> Stock Alerts</a></li>
+                <li><a class="nav-link" href="{{ route('add_products') }}" style="color: #495057;"><i class="bi bi-dot"></i> Add Products</a></li>
+                <li><a class="nav-link" href="{{ route('manage_products') }}" style="color: #495057;"><i class="bi bi-dot"></i> Manage Products</a></li>
+                <li><a class="nav-link" href="{{ route('stock_alert') }}" style="color: #495057;"><i class="bi bi-dot"></i> Stock Alerts</a></li>
             </ul>
         </li>
         {{-- <li class="nav-item">

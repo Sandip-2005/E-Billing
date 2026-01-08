@@ -4,8 +4,8 @@
 <div class="container py-4">
     <div class="card shadow-lg border-0">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h3 class="mb-0"><i class="bi bi-list-ul"></i> All Invoices</h3>
-            <a href="{{ route('make_new_invoice') }}" class="btn btn-light btn-sm">
+            <h3 class="mb-0" style="color: #ffffff;"><i class="bi bi-list-ul"></i> All Invoices</h3>
+            <a href="{{ route('make_new_invoice') }}" class="btn btn-light btn-sm" style="color: #007bff;">
                 <i class="bi bi-plus-circle"></i> Create New Invoice
             </a>
         </div>
@@ -14,23 +14,23 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Invoice #</th>
-                            <th>Customer</th>
-                            <th>Shop</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th style="color: #007bff;">Invoice #</th>
+                            <th style="color: #007bff;">Customer</th>
+                            <th style="color: #007bff;">Shop</th>
+                            <th style="color: #007bff;">Date</th>
+                            <th style="color: #007bff;">Total</th>
+                            <th style="color: #007bff;">Status</th>
+                            <th class="text-center" style="color: #007bff;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($invoices as $invoice)
                             <tr>
-                                <td>{{ $invoice->id }}</td>
-                                <td>{{ $invoice->customer->customer_name ?? 'N/A' }}</td>
-                                <td>{{ $invoice->shop->shop_name ?? 'N/A' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($invoice->bill_date)->format('d M, Y') }}</td>
-                                <td>₹{{ number_format($invoice->total, 2) }}</td>
+                                <td style="color: #495057;">{{ $invoice->id }}</td>
+                                <td style="color: #495057;">{{ $invoice->customer->customer_name ?? 'N/A' }}</td>
+                                <td style="color: #495057;">{{ $invoice->shop->shop_name ?? 'N/A' }}</td>
+                                <td style="color: #495057;">{{ \Carbon\Carbon::parse($invoice->bill_date)->format('d M, Y') }}</td>
+                                <td style="color: #28a745;">₹{{ number_format($invoice->total, 2) }}</td>
                                 <td>
                                     @if ($invoice->status == 'draft')
                                         <span class="badge bg-warning text-dark">Draft</span>
@@ -46,7 +46,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-4">No invoices found.</td>
+                                <td colspan="7" class="text-center text-muted py-4" style="color: #6c757d;">No invoices found.</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function add_products ()
     {
-        $shops = ShopModel::where('user_id', auth()->id())->get();
+        $shops = ShopModel::where('user_id', auth('cuser')->id())->get();
         return view('user_layout.user_inventory.add_products', compact('shops'));
     }
 
@@ -35,7 +35,7 @@ class ProductController extends Controller
 
         // Store product in database
         $product = ProductModel::create([
-            'user_id' => auth()->id(),
+            'user_id' => auth('cuser')->id(),
             'shop_id' => $request->shop_id,
             'product_id' => $request->product_id,
             'product_name' => $request->product_name,
@@ -58,27 +58,28 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = ProductModel::where('user_id', auth()->id())->get();
+        $products = ProductModel::where('user_id', auth('cuser')->id())->get();
         return view('user_layout.user_inventory.manage_products', compact('products'));
     }
 
     public function manage_products (Request $request)
     {
-        $shops = ShopModel::where('user_id', auth()->id())->get();
+        $shops = ShopModel::where('user_id', auth('cuser')->id())->get();
         $shop_id = $request->get('shop_id');
         $products = ProductModel::with('shop')
-            ->where('user_id', auth()->id())
+            ->where('user_id', auth('cuser')->id())
             ->when($shop_id, function($query) use ($shop_id) {
                 $query->where('shop_id', $shop_id);
-            })->get();
+            })->latest('created_at')
+            ->paginate(30);
 
         return view('user_layout.user_inventory.manage_products', compact('products', 'shops', 'shop_id'));
     }
 
     public function edit_products($id)
     {
-        $product = ProductModel::where('user_id', auth()->id())->findOrFail($id);
-        $shops = ShopModel::where('user_id', auth()->id())->get();
+        $product = ProductModel::where('user_id', auth('cuser')->id())->findOrFail($id);
+        $shops = ShopModel::where('user_id', auth('cuser')->id())->get();
         return view('user_layout.user_inventory.edit_products', compact('product', 'shops'));
     }
 
@@ -92,7 +93,7 @@ class ProductController extends Controller
             'quantity' => 'required|integer',
         ]);
 
-        $product = ProductModel::where('user_id', auth()->id())->findOrFail($id);
+        $product = ProductModel::where('user_id', auth('cuser')->id())->findOrFail($id);
 
         $product->update([
             'shop_id' => $request->shop_id,
@@ -110,7 +111,7 @@ class ProductController extends Controller
 
     public function delete_products($id)
     {
-        $product = ProductModel::where('user_id', auth()->id())->findOrFail($id);
+        $product = ProductModel::where('user_id', auth('cuser')->id())->findOrFail($id);
         $product->delete();
 
         return redirect()->route('manage_products')->with('success', 'Product deleted successfully!');
@@ -118,10 +119,10 @@ class ProductController extends Controller
 
     public function stock_alert(Request $request)
     {
-        $shops = ShopModel::where('user_id', auth()->id())->get();
+        $shops = ShopModel::where('user_id', auth('cuser')->id())->get();
         $shop_id = $request->get('shop_id');
         $products = ProductModel::with('shop')
-            ->where('user_id', auth()->id())
+            ->where('user_id', auth('cuser')->id())
             ->where('quantity', '<=', 10) // Assuming stock alert threshold is 10
             ->when($shop_id, function($query) use ($shop_id) {
                 $query->where('shop_id', $shop_id);

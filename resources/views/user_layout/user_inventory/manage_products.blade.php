@@ -4,14 +4,14 @@
     <div class="container py-4">
         <div class="card shadow-lg border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h3 class="mb-0"><i class="bi bi-box-seam"></i> Manage Products</h3>
-                <a href="{{ route('add_products') }}" class="btn btn-light btn-sm">
+                <h3 class="mb-0" style="color: #ffffff;"><i class="bi bi-box-seam"></i> Manage Products</h3>
+                <a href="{{ route('add_products') }}" class="btn btn-light btn-sm" style="color: #007bff;">
                     <i class="bi bi-plus-circle"></i> Add Product
                 </a>
             </div>
             <div class="card-body">
                 <form method="GET" action="{{ route('manage_products') }}" class="mb-3">
-                    <label for="shop_id" class="form-label">Filter by Shop:</label>
+                    <label for="shop_id" class="form-label" style="color: #495057;">Filter by Shop:</label>
                     <select name="shop_id" id="shop_id" class="form-control" onchange="this.form.submit()">
                         <option value="">All Shops</option>
                         @foreach ($shops as $shop)
@@ -21,27 +21,28 @@
                         @endforeach
                     </select>
                 </form>
+                <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Shop</th>
-                            <th>Product ID</th>
-                            <th>Product Name</th>
-                            <th>Price (₹)</th>
-                            <th>Quantity</th>
-                            <th>Action</th>
+                            <th style="color: #007bff;">ID</th>
+                            <th style="color: #007bff;">Shop</th>
+                            <th style="color: #007bff;">Product ID</th>
+                            <th style="color: #007bff;">Product Name</th>
+                            <th style="color: #007bff;">Price (₹)</th>
+                            <th style="color: #007bff;">Quantity</th>
+                            <th style="color: #007bff;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($products as $product)
                             <tr>
-                                <td>{{ $product->id }}</td>
-                                <td>{{ $product->shop->shop_name ?? '-' }}</td>
-                                <td>{{ $product->product_id ?? '-' }}</td>
-                                <td>{{ $product->product_name ?? '-' }}</td>
-                                <td>₹{{ number_format($product->price, 2) }}</td>
-                                <td>{{ $product->quantity }}</td>
+                                <td style="color: #495057;">{{ $product->id }}</td>
+                                <td style="color: #495057;">{{ $product->shop->shop_name ?? '-' }}</td>
+                                <td style="color: #495057;">{{ $product->product_id ?? '-' }}</td>
+                                <td style="color: #495057;">{{ $product->product_name ?? '-' }}</td>
+                                <td style="color: #28a745;">₹{{ number_format($product->price, 2) }}</td>
+                                <td style="color: #495057;">{{ $product->quantity }}</td>
                                 <td>
                                     <a href="{{ route('edit_products', $product->id) }}" class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil-square"></i> Edit
@@ -54,11 +55,12 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">No products found.</td>
+                                <td colspan="6" class="text-center text-muted py-4" style="color: #6c757d;">No products found.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>

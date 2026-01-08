@@ -25,7 +25,7 @@
                         <!-- User Name -->
                         <span>{{ Auth::guard('cuser')->user()->name }}</span>
 
-                        <img src="{{ asset(Auth::guard('cuser')->user()->user_image) }}" alt="{{ asset('storage/user_images/user.png') }}"
+                        <img src="{{ asset('storage/'.Auth::guard('cuser')->user()->user_image) }}" alt="{{ asset('storage/user_images/user.png') }}"
                             class="profile-pictures rounded-circle"
                             style="object-fit: cover; width: 40px; height: 40px;">
                     </a>

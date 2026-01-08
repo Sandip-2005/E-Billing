@@ -177,11 +177,11 @@ class InvoiceController extends Controller
         return $sum;
     }
 
-    private function calculateTotal($items, $tax, $discount)
-    {
-        $sub = $this->calculateSubTotal($items);
-        return max(0, $sub + ($tax ?? 0) - ($discount ?? 0));
-    }
+    // private function calculateTotal($items, $tax, $discount)
+    // {
+    //     $sub = $this->calculateSubTotal($items);
+    //     return max(0, $sub + ($tax ?? 0) - ($discount ?? 0));
+    // }
 
     public function show_invoice($id)
     {
@@ -193,8 +193,8 @@ class InvoiceController extends Controller
     {
         $invoices = InvoiceModel::where('user_id', Auth::guard('cuser')->id())
             ->with(['customer', 'shop'])
-            ->latest('bill_date')
-            ->paginate(10)
+            ->latest('created_at')
+            ->paginate(30)
             ->appends($request->except('page'));
 
         return view('user_layout.user_billing.list_invoices', [
@@ -207,8 +207,8 @@ class InvoiceController extends Controller
         $draftInvoices = InvoiceModel::where('user_id', Auth::guard('cuser')->id())
             ->where('status', 'draft')
             ->with(['customer', 'shop'])
-            ->latest('bill_date')
-            ->paginate(15)
+            ->latest('created_at')
+            ->paginate(30)
             ->appends(request()->query());  // Added to preserve query params in pagination links
 
         return view('user_layout.user_billing.draft_invoice_list', [

@@ -16,12 +16,20 @@ Route::get('welcome', function () {
 })->name('welcome'); 
 
 Route::get('/', function () {
-    return view('layout.index');
+    return view('layout.home');
 })->name('index');
+
+Route::get('/home', function () {
+    return view('layout.home');
+})->name('home');
 
 Route::get('/about-us', function () {
     return view('layout.about_us');
 })->name('about_us');
+
+Route::get('/services', function () {
+    return view('layout.services');
+})->name('services');
 
 Route::get('/footer', function () {
     return view('layout.footer');
@@ -36,12 +44,15 @@ Route::get('/forget_password',[UserRegistrationController::class, 'forget_passwo
 Route::post('/send_code', [UserRegistrationController::class, 'send_code'])->name('send_code');
 Route::get('/verify_otp', [UserRegistrationController::class, 'verify_otp_form'])->name('verify_otp_form');
 Route::post('/forgot-password/verify', [UserRegistrationController::class, 'verify_code'])->name('verify_code');
+Route::get('/verify_email', [UserRegistrationController::class, 'email_verification_form'])->name('email_verification_form');
+Route::post('/verify_email_code', [UserRegistrationController::class, 'verify_email_code'])->name('verify_email_code');
 // Route::get('/signup', function () {
 //     return view('login&signup.signup');
 // })->name('signup');
 
 Route::get('/signup',[UserRegistrationController::class, 'user_signup_form'])->name('signup');
 Route::post('/user_signup/save', [UserRegistrationController::class, 'user_signup'])->name('user_signup');
+Route::post('/change_password', [UserRegistrationController::class, 'update_user_password'])->name('update_user_password');
 
 Route::get('/contact_us', function(){
     return view('layout.contact_us');
@@ -79,6 +90,8 @@ Route::middleware(['auth:cuser'])->group(function () {
     Route::get('/edit_customer/{id}', [AddCustomerController::class, 'edit_customer'])->name('edit_customer');
     Route::put('/update_customer/{id}', [AddCustomerController::class, 'update_customer'])->name('update_customer');
     Route::get('/delete_customer/{id}', [AddCustomerController::class, 'delete_customer'])->name('delete_customer');
+Route::post('/forgot-password/verify', [UserRegistrationController::class, 'verify_code2'])->name('verify_code2');
+    
 });
 
 //admin section

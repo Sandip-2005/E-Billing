@@ -89,13 +89,13 @@
                     </div>
 
                     <div id="new_customer_fields" class="mb-3" style="display: none;">
-                        <input type="text" name="customer_name" class="form-control mb-2" placeholder="Customer Name"
+                        <input type="text" name="customer_name" class="form-control mb-2" placeholder="Customer Name **"
                             value="{{ old('customer_name', isset($invoice) ? $invoice->customer->customer_name ?? '' : '') }}">
 
                         <input type="email" name="customer_email" class="form-control mb-2" placeholder="Email"
                             value="{{ old('customer_email', isset($invoice) ? $invoice->customer->email ?? '' : '') }}">
 
-                        <input type="text" name="customer_phone" class="form-control mb-2" placeholder="Phone"
+                        <input type="text" name="customer_phone" class="form-control mb-2" placeholder="Phone **"
                             value="{{ old('customer_phone', isset($invoice) ? $invoice->customer->phone_number ?? '' : '') }}">
 
                         <textarea name="customer_address" class="form-control" placeholder="Address">{{ old('customer_address', isset($invoice) ? $invoice->customer->address ?? '' : '') }}</textarea>

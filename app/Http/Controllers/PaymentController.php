@@ -95,8 +95,8 @@ class PaymentController extends Controller
         }
         
 
-        $invoices = $query->latest('bill_date')
-            ->paginate(15)
+        $invoices = $query->latest('created_at')
+            ->paginate(30)
             ->appends($request->except('page'));
 
         $filters = $request->only(['date_from', 'date_to', 'customer_id', 'shop_id', 'status']);
@@ -109,8 +109,8 @@ class PaymentController extends Controller
         $partiallyPaidInvoices = InvoiceModel::where('user_id', Auth::id())
             ->whereIn('status', ['unpaid', 'partially_paid'])->where('due_amount', '>', 0)
             ->with(['customer', 'shop'])
-            ->latest('bill_date')
-            ->paginate(50);
+            ->latest('created_at')
+            ->paginate(30);
 
         return view('user_layout.user_payments.payment_dues', compact('partiallyPaidInvoices'));
     }

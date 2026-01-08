@@ -23,7 +23,7 @@
                 @endif
                 <div class="form-floating position-relative mb-3">
                     <input type="text" class="form-control" id="usernameoremail" name="usernameoremail"
-                        placeholder="Email/Username" required>
+                        placeholder="Email/Username" value="{{ old('usernameoremail') }}" required>
                     <label for="usernameoremail">Email or Username</label>
                     <i class="bi bi-person input-icon"></i>
                 </div>
@@ -31,13 +31,16 @@
                 <div class="form-floating position-relative mb-3">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password"
                         required>
+
                     <label for="password">Password</label>
-                    <i class="bi bi-lock input-icon"></i>
+                    <i class="bi bi-lock position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3 text-muted"
+                        id="togglePassword" style="cursor: pointer;"></i>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="rememberMe">
+                        <input class="form-check-input" type="checkbox" value="1" id="rememberMe" name="rememberMe">
                         <label class="form-check-label" for="rememberMe">
                             Remember me
                         </label>
@@ -57,5 +60,19 @@
 
         </div>
     </div>
+
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+    </script>
+
 
 @endsection
