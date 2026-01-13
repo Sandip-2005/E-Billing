@@ -384,12 +384,15 @@ class UserRegistrationController extends Controller
         }
 
         $user->password = Hash::make($request->password);
-        $user->save();
 
-        return redirect()->back()->with('success', 'Password updated successfully.');
+        if ($user->save()) {
+            return redirect()->back()->with('success', 'Password updated successfully.');
+        } else {
+            return redirect()->back()->with('fail', 'Something went wrong, try again later.');
+        }
     }
 
-     public function verify_Code2(Request $request)
+    public function verify_Code2(Request $request)
     {
         if (!$request->filled('email') && $request->session()->has('reset_email')) {
             $request->merge(['email' => $request->session()->get('reset_email')]);
@@ -425,5 +428,4 @@ class UserRegistrationController extends Controller
 
         return redirect()->route('user_profile')->with('success', 'Password reset successful. Please login with your new password.');
     }
-
 }
